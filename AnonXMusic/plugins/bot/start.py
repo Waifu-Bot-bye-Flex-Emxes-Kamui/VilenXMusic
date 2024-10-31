@@ -32,14 +32,11 @@ async def start_pm(client, message: Message, _):
         name = message.text.split(None, 1)[1]
         if name[0:4] == "help":
             keyboard = help_pannel(_)
-            await message.reply_text(
-                text=_["help_1"].format(config.SUPPORT_CHAT),
+            return await message.reply_photo(
+                caption=_["help_1"].format(config.SUPPORT_CHAT),
+                photo=config.START_IMG_URL,
                 reply_markup=keyboard,
             )
-            await message.reply_photo(
-                photo=config.START_IMG_URL
-            )
-            return
         if name[0:3] == "sud":
             await sudoers_list(client=client, message=message, _=_)
             if await is_on_off(2):
@@ -74,13 +71,11 @@ async def start_pm(client, message: Message, _):
                 ]
             )
             await m.delete()
-            await message.reply_text(
-                text=searched_text,
-                reply_markup=key
-            )
             await app.send_photo(
                 chat_id=message.chat.id,
                 photo=thumbnail,
+                caption=searched_text,
+                reply_markup=key,
             )
             if await is_on_off(2):
                 return await app.send_message(
@@ -89,12 +84,10 @@ async def start_pm(client, message: Message, _):
                 )
     else:
         out = private_panel(_)
-        await message.reply_text(
-            text=_["start_2"].format(message.from_user.mention, app.mention),
-            reply_markup=InlineKeyboardMarkup(out),
-        )
         await message.reply_photo(
+            caption=_["start_2"].format(message.from_user.mention, app.mention),
             photo=config.START_IMG_URL,
+            reply_markup=InlineKeyboardMarkup(out),
         )
         if await is_on_off(2):
             return await app.send_message(
@@ -108,12 +101,10 @@ async def start_pm(client, message: Message, _):
 async def start_gp(client, message: Message, _):
     out = start_panel(_)
     uptime = int(time.time() - _boot_)
-    await message.reply_text(
-        text=_["start_1"].format(app.mention, get_readable_time(uptime)),
-        reply_markup=InlineKeyboardMarkup(out),
-    )
     await message.reply_photo(
-        photo=config.START_IMG_URL
+        caption=_["start_1"].format(app.mention, get_readable_time(uptime)),
+        photo=config.START_IMG_URL,
+        reply_markup=InlineKeyboardMarkup(out),
     )
     return await add_served_chat(message.chat.id)
 
@@ -145,17 +136,15 @@ async def welcome(client, message: Message):
                     return await app.leave_chat(message.chat.id)
 
                 out = start_panel(_)
-                await message.reply_text(
-                    text=_["start_3"].format(
+                await message.reply_photo(
+                    caption=_["start_3"].format(
                         message.from_user.first_name,
+                    photo=config.START_IMG_URL,
                         app.mention,
                         message.chat.title,
                         app.mention,
                     ),
                     reply_markup=InlineKeyboardMarkup(out),
-                )
-                await message.reply_photo(
-                    photo=config.START_IMG_URL
                 )
                 await add_served_chat(message.chat.id)
                 await message.stop_propagation()
