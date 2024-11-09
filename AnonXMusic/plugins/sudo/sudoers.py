@@ -47,6 +47,20 @@ async def userdel(client, message: Message, _):
 @app.on_message(filters.command(["sudolist", "listsudo", "sudoers"]) & ~BANNED_USERS)
 @language
 async def sudoers_list(client, message: Message, _):
+    # Check if user is the owner or in the SUDOERS list
+    if message.from_user.id != OWNER_ID and message.from_user.id not in SUDOERS:
+        # Get the owner's profile to create a clickable link
+        owner = await app.get_users(OWNER_ID)
+        owner_link = f'<a href="tg://user?id={OWNER_ID}">{owner.first_name}</a>'
+
+        # Reply with the customized message for unauthorized users
+        return await message.reply_text(
+            f"<b>sᴏʀʀʏ ʙᴀʙʏ ʏᴏᴜ ᴄᴀɴ'ᴛ ᴄʜᴇᴄᴋ sᴜᴅᴏ ᴜsᴇʀs 😗</b>\n"
+            f"<b>ᴛᴀʟᴋ ᴛᴏ ᴍʏ ᴏᴡɴᴇʀ 👨‍💻  {owner_link}</b>",
+            disable_web_page_preview=True,
+        )
+
+    # Generate and send the sudo list for authorized users
     text = _["sudo_5"]
     user = await app.get_users(OWNER_ID)
     user = user.first_name if not user.mention else user.mention
